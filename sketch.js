@@ -8,8 +8,8 @@ let w_height =
   document.documentElement.clientHeight ||
   document.body.clientHeight;
 let cell_size = 20;
-let snake = [];
-let snake_velocity = {x: 0, y: 0};
+let snake = new Snake(0, 0);
+snake.velocity = { x: 0, y: 0 };
 
 function setup() {
   createCanvas(w_width, w_height);
@@ -19,7 +19,6 @@ function setup() {
   // for (let i = 0; i < 60; i++) {
   //   points.push(new Point());
   // }
-  snake.push({ x: 0, y: 0 });
 }
 
 function draw() {
@@ -49,33 +48,22 @@ function draw() {
       rect(x, y, cell_size, cell_size);
     }
   }
-  for (let i = 0; i < snake.length; i++) {
-    let x = snake[i].x;
-    let y = snake[i].y;
-    strokeWeight(0.25);
-    stroke(255);
-    fill(255);
-    rect(x, y, cell_size, cell_size);
-  }
-
-  updateSnake();
+  snake.update();
+  snake.draw();
 }
 
 function keyPressed() {
   if (keyCode === UP_ARROW) {
-    snake_velocity = { x: 0, y: -cell_size };
+    snake.velocity = { x: 0, y: -cell_size };
   } else if (keyCode === DOWN_ARROW) {
-    snake_velocity = { x: 0, y: cell_size };
+    snake.velocity = { x: 0, y: cell_size };
   } else if (keyCode === LEFT_ARROW) {
-    snake_velocity = { x: -cell_size, y: 0 };
+    snake.velocity = { x: -cell_size, y: 0 };
   } else if (keyCode === RIGHT_ARROW) {
-    snake_velocity = { x: cell_size, y: 0 };
+    snake.velocity = { x: cell_size, y: 0 };
   }
-}
-
-function updateSnake() {
-  for (let i = 0; i < snake.length; i++) {
-    snake[i].x += snake_velocity.x;
-    snake[i].y += snake_velocity.y;
+  if (key === 'e') {
+    snake.addTail();
+    console.log("pressed e")
   }
 }
