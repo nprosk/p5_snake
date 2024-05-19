@@ -14,6 +14,8 @@ class Snake {
     }
     this.x += this.velocity.x;
     this.y += this.velocity.y;
+    this.checkCollision();
+    this.checkBounds();
   }
 
   updateHelper() {
@@ -42,5 +44,39 @@ class Snake {
       console.log("Added tail!");
       console.log(this.next);
     }
+  }
+
+  checkCollision() {
+    if (this.next) {
+      this.checkCollisionHelper(this.next);
+    }
+  }
+
+  checkCollisionHelper(snake) {
+    if (this.x === snake.x && this.y === snake.y) {
+      console.log("Collision detected!");
+      this.resetSnake();
+      return;
+    }
+    if (snake.next) {
+      this.checkCollisionHelper(snake.next);
+    }
+  }
+
+  checkBounds() {
+    if (this.x >= w_width || this.x < 0 || this.y >= w_height || this.y < 0) {
+      console.log("Out of bounds!");
+      this.resetSnake();
+    }
+    if (this.next) {
+      this.next.checkBounds();
+    }
+  }
+
+  resetSnake() {
+    this.x = 0;
+    this.y = 0;
+    this.velocity = { x: cell_size, y: 0 };
+    this.next = null;
   }
 }

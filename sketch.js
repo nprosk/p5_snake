@@ -7,9 +7,14 @@ let w_height =
   window.innerHeight ||
   document.documentElement.clientHeight ||
   document.body.clientHeight;
+w_width = 600;
+w_height = 400;
 let cell_size = 20;
+let cell_rows = w_height / cell_size;
+let cell_cols = w_width / cell_size;
 let snake = new Snake(0, 0);
-snake.velocity = { x: 0, y: 0 };
+let food = new Food();
+snake.velocity = { x: cell_size, y: 0 };
 
 function setup() {
   createCanvas(w_width, w_height);
@@ -26,16 +31,14 @@ function draw() {
   if (gamePaused) {
     return;
   }
-  w_width =
-    window.innerWidth ||
-    document.documentElement.clientWidth ||
-    document.body.clientWidth;
-  w_height =
-    window.innerHeight ||
-    document.documentElement.clientHeight ||
-    document.body.clientHeight;
-  w_width = 600;
-  w_height = 400;
+  // w_width =
+  //   window.innerWidth ||
+  //   document.documentElement.clientWidth ||
+  //   document.body.clientWidth;
+  // w_height =
+  //   window.innerHeight ||
+  //   document.documentElement.clientHeight ||
+  //   document.body.clientHeight;
   resizeCanvas(w_width, w_height);
   background(0);
   for (let rows = 0; rows < w_width; rows += cell_size) {
@@ -50,20 +53,25 @@ function draw() {
   }
   snake.update();
   snake.draw();
+  if (snake.x === food.x && snake.y === food.y) {
+    snake.addTail();
+    food.newLocation();
+  }
+  food.draw();
 }
 
 function keyPressed() {
-  if (keyCode === UP_ARROW) {
+  if (keyCode === UP_ARROW && snake.velocity.y <= 0) {
     snake.velocity = { x: 0, y: -cell_size };
-  } else if (keyCode === DOWN_ARROW) {
+  } else if (keyCode === DOWN_ARROW && snake.velocity.y >= 0) {
     snake.velocity = { x: 0, y: cell_size };
-  } else if (keyCode === LEFT_ARROW) {
+  } else if (keyCode === LEFT_ARROW && snake.velocity.x <= 0) {
     snake.velocity = { x: -cell_size, y: 0 };
-  } else if (keyCode === RIGHT_ARROW) {
+  } else if (keyCode === RIGHT_ARROW && snake.velocity.x >= 0) {
     snake.velocity = { x: cell_size, y: 0 };
   }
-  if (key === 'e') {
+  if (key === "e") {
     snake.addTail();
-    console.log("pressed e")
+    console.log("pressed e");
   }
 }
