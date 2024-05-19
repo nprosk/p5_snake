@@ -74,9 +74,14 @@ class Snake {
   }
 
   resetSnake() {
-    this.x = 0;
-    this.y = 0;
+    this.x = (cell_size * cell_cols) / 2;
+    this.y = (cell_size * cell_rows) / 2;
     this.velocity = { x: cell_size, y: 0 };
     this.next = null;
+    food.newLocation();
+    if (score > highScore) {
+      highScore = score;
+    }
+    score = 0;
   }
 }

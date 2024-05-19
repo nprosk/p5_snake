@@ -1,4 +1,15 @@
-let gamePaused = document.getElementById("pause-game").checked;
+let gamePausedBtn = document.getElementById("game-toggle");
+let gamePaused = true;
+gamePausedBtn.addEventListener("click", () => {
+  gamePaused = !gamePaused;
+  if (gamePaused) {
+    gamePausedBtn.innerHTML = "Resume";
+  }
+  if (!gamePaused) {
+    gamePausedBtn.innerHTML = "Pause";
+  }
+});
+
 let w_width =
   window.innerWidth ||
   document.documentElement.clientWidth ||
@@ -9,55 +20,60 @@ let w_height =
   document.body.clientHeight;
 w_width = 600;
 w_height = 400;
+
 let cell_size = 20;
 let cell_rows = w_height / cell_size;
 let cell_cols = w_width / cell_size;
-let snake = new Snake(0, 0);
+
+let snake = new Snake((cell_size * cell_cols) / 2, (cell_size * cell_rows) / 2);
 let food = new Food();
 snake.velocity = { x: cell_size, y: 0 };
+
+let score = 0;
+let highScore = 0;
+
+/*
+add score, high score, and game over functionality
+add speed increase functionality
+*/
 
 function setup() {
   createCanvas(w_width, w_height);
   background(0);
   frameRate(10);
-  // points = [];
-  // for (let i = 0; i < 60; i++) {
-  //   points.push(new Point());
-  // }
 }
 
 function draw() {
-  gamePaused = document.getElementById("pause-game").checked;
   if (gamePaused) {
-    return;
-  }
-  // w_width =
-  //   window.innerWidth ||
-  //   document.documentElement.clientWidth ||
-  //   document.body.clientWidth;
-  // w_height =
-  //   window.innerHeight ||
-  //   document.documentElement.clientHeight ||
-  //   document.body.clientHeight;
-  resizeCanvas(w_width, w_height);
-  background(0);
-  for (let rows = 0; rows < w_width; rows += cell_size) {
-    for (let cols = 0; cols < w_height; cols += cell_size) {
-      let x = rows;
-      let y = cols;
-      strokeWeight(0.25);
-      stroke(255);
-      fill(0);
-      rect(x, y, cell_size, cell_size);
+  } else {
+    resizeCanvas(w_width, w_height);
+    background(0);
+    for (let rows = 0; rows < w_width; rows += cell_size) {
+      for (let cols = 0; cols < w_height; cols += cell_size) {
+        let x = rows;
+        let y = cols;
+        strokeWeight(0.25);
+        stroke(255);
+        fill(0);
+        rect(x, y, cell_size, cell_size);
+      }
     }
+    snake.update();
+    snake.draw();
+    if (snake.x === food.x && snake.y === food.y) {
+      snake.addTail();
+      food.newLocation();
+      score++;
+      if (score > highScore) {
+        highScore = score;
+      }
+    }
+    food.draw();
+    textSize(20);
+    fill(255);
+    text(`Score: ${score}`, 10, 30);
+    text(`High Score: ${highScore}`, 10, 60);
   }
-  snake.update();
-  snake.draw();
-  if (snake.x === food.x && snake.y === food.y) {
-    snake.addTail();
-    food.newLocation();
-  }
-  food.draw();
 }
 
 function keyPressed() {
@@ -69,9 +85,10 @@ function keyPressed() {
     snake.velocity = { x: -cell_size, y: 0 };
   } else if (keyCode === RIGHT_ARROW && snake.velocity.x >= 0) {
     snake.velocity = { x: cell_size, y: 0 };
-  }
-  if (key === "e") {
+  } else if (key === "e") {
     snake.addTail();
     console.log("pressed e");
+  } else if (keyCode === 32) {
+    gamePaused = !gamePaused;
   }
 }
